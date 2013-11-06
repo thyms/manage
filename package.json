@@ -1,0 +1,22 @@
+{
+  "name": "manage",
+  "version": "0.0.1",
+  "description": "General purpose utility program",
+  "bin": {
+    "manage": "./bin/manage.js"
+  },
+  "repository": "",
+  "keywords": [
+    "utility"
+  ],
+  "author": {
+    "name": "Deniz KALFA"
+  },
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "commander": "~1.1.1",
+    "q": "*",
+    "prompt": "~0.2.11"
+  }
+}
