@@ -3,7 +3,11 @@ var util = require('util')
   , exec = q.denodeify(require('child_process').exec)
   , prompt = require('prompt')
 
+var project_extensions = ['', '-presentation', '-presentation-functional', '-presentation-stubulator', 
+                          '-core', '-core-functional', '-core-stubulator'];
+
 command = {
+  project_extensions: project_extensions,
 	execute: function(project_name, options){
     var prompt_properties = [{
       name: 'username',
@@ -24,9 +28,9 @@ command = {
     prompt.start();
     prompt.get(prompt_properties, function (err, result) {
       if (err) { return onErr(err); }
-      var project_extensions = ['', '-presentation', '-presentation-functional', '-presentation-stubulator', '-core', '-core-functional', '-core-stubulator']
-      
-      project_extensions.forEach(function(project_extension) {
+
+      var extensions = options.withoutProjectExtensions ? [''] : options.projectExtensions;
+      extensions.forEach(function(project_extension) {
         var repository_name = project_name + project_extension;
         var command = util.format('curl -X DELETE -u "%s:%s" https://api.github.com/repos/%s/%s', result.username, result.password, result.username, repository_name);
         exec(command)
