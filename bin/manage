@@ -2,18 +2,15 @@
 
 var program = require ('commander')
   , fs = require('fs')
-  , util = require('util')
-  , q = require('q')
-  , exec = q.denodeify(require('child_process').exec)
-  , spawn = require('child_process').spawn
-  , prompt = require('prompt');
+  , createProjectCommand = require('../commands/createProjectCommand.js')
+  , deleteProjectCommand = require('../commands/deleteProjectCommand.js');
 
 program
   .version(JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8')).version)
   .usage('<command> [options]');
 
-var nodeCommand = process.argv[0]
-  , args = process.argv.slice(2);
+// var nodeCommand = process.argv[0]
+//   , args = process.argv.slice(2);
 
 function onErr(err) { console.log('There was a problem, please check your options'); return 1; }
 
@@ -21,41 +18,13 @@ program
   .command('create-project [project_name]')
   .description('Creates basic project on repository')
   //.option("-P, --project-name [project_name]", "project name")
-  .action(function(project_name, options){
-    schema = {
-      properties: {
-        name: {
-          description: 'Enter your username',
-          required: true
-        },
-        password: {
-          hidden: true,
-          required: true
-        }
-      }
-    };
+  .action(createProjectCommand.execute)
+  .usage('<project_name>');
 
-    prompt.start();
-    prompt.get(schema, function (err, result) {
-      if (err) { return onErr(err); }
-      var project_extensions = ['', '-presentation', '-presentation-functional', '-presentation-stubulator', '-core', '-core-functional', '-core-stubulator']
-      
-      project_extensions.forEach(function(project_extension) {
-        var repository_name = project_name + project_extension;
-        var repo_options = { "name": repository_name,
-                             "private": false,
-                             "has_issues": true,
-                             "has_wiki": true,
-                             "has_downloads": true }
-        var command = util.format('curl -u "%s:%s" https://api.github.com/user/repos -d \'%s\'', result.name, result.password, JSON.stringify(repo_options));
-        exec(command)
-          .then(function(stdout) {
-            console.log('Project "%s" is created successfully...', repository_name);
-          })
-          .fail(function(err){ return onError(err); });
-      })
-    });
-  })
+program
+  .command('delete-project [project_name]')
+  .description('Deletes given project from repository')
+  .action(deleteProjectCommand.execute)
   .usage('<project_name>');
 
 program.parse(process.argv);
