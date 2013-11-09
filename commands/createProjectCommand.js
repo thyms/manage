@@ -28,10 +28,19 @@ command = {
       if (err) { return onErr(err); }
 
       var make_file_path = __dirname + '/Makefile';
-      var command = util.format("make user=%s password=%s repository-name=%s create-project-on-repository -f %s", result.username, result.password, project_name, make_file_path);
-      exec(command)
+      var commandCreateProject = util.format("make user=%s password=%s repository-name=%s project-create-on-repository -f %s", result.username, result.password, project_name, make_file_path);
+      exec(commandCreateProject)
         .then(function(stdout) {
-          console.log('Project "%s" is created successfully...', project_name);
+          console.log('Project "%s" is created successfully on repository...', project_name);
+
+          var commandApplyTemplate = util.format("make repository-name=%s project-apply-template -f %s", project_name, make_file_path);
+          exec(commandApplyTemplate)
+            .then(function(stdout) {
+              console.log('Project "%s" is created successfully...', project_name);
+            })
+            .fail(function(err){ console.log('error: ', error); });
+
+
         })
         .fail(function(err){ return onError(err); });
     });
