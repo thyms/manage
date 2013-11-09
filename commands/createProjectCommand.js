@@ -9,9 +9,6 @@ var project_extensions = ['', '-presentation', '-presentation-functional', '-pre
 
 command = {
   project_extensions: project_extensions,
-  execute1:  function(project_name, options){
-    console.log('options: ', options);
-  },
 	execute: function(project_name, options){
     schema = {
       properties: {
@@ -30,24 +27,15 @@ command = {
     prompt.get(schema, function (err, result) {
       if (err) { return onErr(err); }
 
-      var extensions = options.shortProjectExtensions ? project_extensions_short : options.withoutProjectExtensions ? [''] : options.projectExtensions;
-      extensions.forEach(function(project_extension) {
-        var repository_name = project_name + project_extension;
-        var repo_options = { "name": repository_name,
-                             "private": false,
-                             "has_issues": true,
-                             "has_wiki": true,
-                             "has_downloads": true }
-        var command = util.format('curl -u "%s:%s" https://api.github.com/user/repos -d \'%s\'', result.username, result.password, JSON.stringify(repo_options));
-        exec(command)
-          .then(function(stdout) {
-            console.log('Project "%s" is created successfully...', repository_name);
-          })
-          .fail(function(err){ return onError(err); });
-      })
+      var make_file_path = __dirname + '/Makefile';
+      var command = util.format("make user=%s password=%s repository-name=%s create-project-on-repository -f %s", result.username, result.password, project_name, make_file_path);
+      exec(command)
+        .then(function(stdout) {
+          console.log('Project "%s" is created successfully...', project_name);
+        })
+        .fail(function(err){ return onError(err); });
     });
   }
 }
-
 
 module.exports = command;
