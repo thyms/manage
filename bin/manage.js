@@ -17,17 +17,14 @@ function onErr(err) { console.log('There was a problem, please check your option
 program
   .command('create-project [project_name]')
   .description('Creates basic project on repository')
-  .option("-P, --project-extensions [project_extension ...]", "use project extension(s)", createProjectCommand.project_extensions)
-  .option("-S, --short-project-extensions [true|false]", "use short project extension(s)", false)
-  .option("-W, --without-project-extensions [true|false]", "without project extension(s)", false)
+  .option("-P, --presentation-layer-project [true|false]", "Project with only presentation layer", false)
   .action(createProjectCommand.execute)
   .usage('<project_name>');
 
 program
   .command('delete-project [project_name]')
   .description('Deletes given project from repository')
-  .option("-P, --project-extensions [project_extension ...]", "use project extension(s)", deleteProjectCommand.project_extensions)
-  .option("-W, --without-project-extensions [true|false]", "without project extension(s)", false)
+  .option("-P, --presentation-layer-project [true|false]", "Project with only presentation layer", false)
   .action(deleteProjectCommand.execute)
   .usage('<project_name>');
 

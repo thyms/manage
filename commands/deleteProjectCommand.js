@@ -1,13 +1,12 @@
 var util = require('util')
-  , q = require('q')
-  , exec = q.denodeify(require('child_process').exec)
+  , spawn = require('child_process').spawn
   , prompt = require('prompt')
 
-var project_extensions = ['', '-presentation', '-presentation-functional', '-presentation-stubulator', 
-                          '-core', '-core-functional', '-core-stubulator'];
+function consoleLog(data) {
+  console.log("" + data);
+}
 
 command = {
-  project_extensions: project_extensions,
 	execute: function(project_name, options){
     var prompt_properties = [{
       name: 'username',
@@ -29,16 +28,15 @@ command = {
     prompt.get(prompt_properties, function (err, result) {
       if (err) { return onErr(err); }
 
-      var extensions = options.withoutProjectExtensions ? [''] : options.projectExtensions;
-      extensions.forEach(function(project_extension) {
-        var repository_name = project_name + project_extension;
-        var command = util.format('curl -X DELETE -u "%s:%s" https://api.github.com/repos/%s/%s', result.username, result.password, result.username, repository_name);
-        exec(command)
-          .then(function(stdout) {
-            console.log('Project "%s" is deleted successfully...', repository_name);
-          })
-          .fail(function(err){ return onError(err); });
-      })
+      var make_file_path = __dirname + '/Makefile'
+        , makeTarget = options.presentationLayerProject ? 'procet-delete-on-repository-presentation' : 'procet-delete-on-repository'
+        , make_create_project = spawn('make', ['user='+result.username, 'password='+result.password, 'repository-name='+project_name, makeTarget, '-f', make_file_path]);
+      make_create_project.stdout.on('data', consoleLog);
+      make_create_project.stderr.on('data', consoleLog);
+      make_create_project.on('exit', function(code) {
+        var message = code == 0 ? 'Delete Project: Succesfully executed' : 'Delete Project: Exited unsuccessfully, Exit Code: ' + code;
+        console.log(message);
+      });
     });
   }
 }

@@ -1,15 +1,13 @@
 var util = require('util')
-  , q = require('q')
-  , exec = q.denodeify(require('child_process').exec)
+  , spawn = require('child_process').spawn
   , prompt = require('prompt');
 
-var project_extensions = ['', '-presentation', '-presentation-functional', '-presentation-stubulator', 
-                          '-core', '-core-functional', '-core-stubulator']
-  , project_extensions_short = ['', '-presentation', '-presentation-functional', '-presentation-stubulator'];
+function consoleLog(data) {
+  console.log("" + data);
+}
 
 command = {
-  project_extensions: project_extensions,
-	execute: function(project_name, options){
+  execute: function(project_name, options){
     schema = {
       properties: {
         username: {
@@ -25,24 +23,28 @@ command = {
 
     prompt.start();
     prompt.get(schema, function (err, result) {
-      if (err) { return onErr(err); }
+      if (err) { return consoleLog(err); }
 
-      var make_file_path = __dirname + '/Makefile';
-      var commandCreateProject = util.format("make user=%s password=%s repository-name=%s project-create-on-repository -f %s", result.username, result.password, project_name, make_file_path);
-      exec(commandCreateProject)
-        .then(function(stdout) {
-          console.log('Project "%s" is created successfully on repository...', project_name);
-
-          var commandApplyTemplate = util.format("make repository-name=%s project-apply-template -f %s", project_name, make_file_path);
-          exec(commandApplyTemplate)
-            .then(function(stdout) {
-              console.log('Project "%s" is created successfully...', project_name);
-            })
-            .fail(function(err){ console.log('error: ', error); });
-
-
-        })
-        .fail(function(err){ return onError(err); });
+      var make_file_path = __dirname + '/Makefile'
+        , makeTarget = options.presentationLayerProject ? 'project-create-on-repository-presentation' : 'project-create-on-repository'
+        , templateRepository = options.presentationLayerProject ? 'itachi' : 'filmster'
+        , make_create_project = spawn('make', ['user='+result.username, 'password='+result.password, 'repository-name='+project_name, makeTarget, '-f', make_file_path]);
+      make_create_project.stdout.on('data', consoleLog);
+      make_create_project.stderr.on('data', consoleLog);
+      make_create_project.on('exit', function(code) {
+        if(code == 0){
+          makeTarget = options.presentationLayerProject ? 'project-apply-template-presentation' : 'project-apply-template';
+          var make_apply_project = spawn('make', ['repository-name='+project_name, 'template-project-name='+templateRepository, makeTarget, '-f', make_file_path]);
+          make_apply_project.stdout.on('data', consoleLog);
+          make_apply_project.stderr.on('data', consoleLog);
+          make_apply_project.on('exit', function(code) {
+            var message = code == 0 ? 'Apply Template: Succesfully executed' : 'Apply Template: Exited unsuccessfully, Exit Code: ' + code;
+            console.log(message);
+          });
+        } else {
+          console.log('Create Project: Exited unsuccessfully, Exit Code: ' + code);
+        }
+      });
     });
   }
 }
