@@ -43,17 +43,16 @@ project-initialize:
 project-apply-template:
 	echo "Applying template..."
 	rm -rf /tmp/$(repository-name)
-	git clone git@github-FILMSTER.com:deniz-kalfa/$(template-project-name).git /tmp/$(repository-name)
+	git clone git@github.com:thyms/$(template-project-name).git /tmp/$(repository-name)
 	cd /tmp/$(repository-name) && \
-	git checkout template-0.2 && \
+	git checkout $(template-project-tag) && \
 	git submodule update --init && \
 	rm -rf .git && \
-	for file in `find . -name "*" -type f`; do sed -i '' s/[Ff]ilmster/$(repository-name)/g $$file; done && \
-	for file in `find . -name "*" -type f`; do sed -i '' s/deniz-kalfa/thyms/g $$file; done && \
+	for file in `find . -name "*" -type f`; do sed -i '' s/$(template-project-name)/$(repository-name)/g $$file; done && \
 	mv presentation-functional/src/test/groovy/$(template-project-name) presentation-functional/src/test/groovy/$(repository-name) && \
 	mv core/src/main/groovy/$(template-project-name) core/src/main/groovy/$(repository-name) && \
-	mv core/src/test/groovy/mentat core/src/test/groovy/$(repository-name) && \
-	mv core-functional/src/test/groovy/$(template-project-name) core/src/test/groovy/$(repository-name) && \
+	mv core/src/test/groovy/$(template-project-name) core/src/test/groovy/$(repository-name) && \
+	mv core-functional/src/test/groovy/$(template-project-name) core-functional/src/test/groovy/$(repository-name) && \
 	make project-name=presentation project-initialize -f $(MAKEFILE_LIST)
 	make project-name=presentation-functional project-initialize -f $(MAKEFILE_LIST)
 	make project-name=presentation-stubulator project-initialize -f $(MAKEFILE_LIST)
@@ -74,7 +73,7 @@ project-apply-template-presentation:
 	rm -rf /tmp/$(repository-name)
 	git clone git@github.com:thyms/$(template-project-name).git /tmp/$(repository-name)
 	cd /tmp/$(repository-name) && \
-	git checkout template-0.1 && \
+	git checkout $(template-project-tag) && \
 	git submodule update --init && \
 	rm -rf .git && \
 	for file in `find . -name "*" -type f`; do sed -i '' s/$(template-project-name)/$(repository-name)/g $$file; done && \

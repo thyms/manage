@@ -6,7 +6,10 @@ function consoleLog(data) {
   console.log("" + data);
 }
 
+var template_project_tag = 'template-0.1';
+
 command = {
+  template_project_tag: template_project_tag,
   execute: function(project_name, options){
     schema = {
       properties: {
@@ -27,14 +30,15 @@ command = {
 
       var make_file_path = __dirname + '/Makefile'
         , makeTarget = options.presentationLayerProject ? 'project-create-on-repository-presentation' : 'project-create-on-repository'
-        , templateRepository = options.presentationLayerProject ? 'itachi' : 'filmster'
+        , templateRepository = options.presentationLayerProject ? 'itachi' : 'anbu'
         , make_create_project = spawn('make', ['user='+result.username, 'password='+result.password, 'repository-name='+project_name, makeTarget, '-f', make_file_path]);
       make_create_project.stdout.on('data', consoleLog);
       make_create_project.stderr.on('data', consoleLog);
       make_create_project.on('exit', function(code) {
         if(code == 0){
           makeTarget = options.presentationLayerProject ? 'project-apply-template-presentation' : 'project-apply-template';
-          var make_apply_project = spawn('make', ['repository-name='+project_name, 'template-project-name='+templateRepository, makeTarget, '-f', make_file_path]);
+
+          make_apply_project = spawn('make', ['repository-name='+project_name, 'template-project-name='+templateRepository, 'template-project-tag='+options.templateProjectTag, makeTarget, '-f', make_file_path]);
           make_apply_project.stdout.on('data', consoleLog);
           make_apply_project.stderr.on('data', consoleLog);
           make_apply_project.on('exit', function(code) {
