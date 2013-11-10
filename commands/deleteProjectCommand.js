@@ -29,7 +29,7 @@ command = {
       if (err) { return onErr(err); }
 
       var make_file_path = __dirname + '/Makefile'
-        , makeTarget = options.presentationLayerProject ? 'procet-delete-on-repository-presentation' : 'procet-delete-on-repository'
+        , makeTarget = options.presentationLayerProject ? 'project-delete-on-repository-presentation' : 'project-delete-on-repository'
         , make_create_project = spawn('make', ['user='+result.username, 'password='+result.password, 'repository-name='+project_name, makeTarget, '-f', make_file_path]);
       make_create_project.stdout.on('data', consoleLog);
       make_create_project.stderr.on('data', consoleLog);

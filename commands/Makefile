@@ -13,7 +13,7 @@ project-create-on-repository:
 	curl -u "$(user):$(password)" https://api.github.com/user/repos -d '{ "name": "$(repository-name)-core-functional", "private": false, "has_issues": true, "has_wiki": true, "has_downloads": true }'
 	curl -u "$(user):$(password)" https://api.github.com/user/repos -d '{ "name": "$(repository-name)-core-stubulator", "private": false, "has_issues": true, "has_wiki": true, "has_downloads": true }'
 
-procet-delete-on-repository:
+project-delete-on-repository:
 	curl -X DELETE -u "$(user):$(password)" https://api.github.com/repos/$(user)/$(repository-name)
 	curl -X DELETE -u "$(user):$(password)" https://api.github.com/repos/$(user)/$(repository-name)-presentation
 	curl -X DELETE -u "$(user):$(password)" https://api.github.com/repos/$(user)/$(repository-name)-presentation-functional
@@ -21,12 +21,31 @@ procet-delete-on-repository:
 	curl -X DELETE -u "$(user):$(password)" https://api.github.com/repos/$(user)/$(repository-name)-core
 	curl -X DELETE -u "$(user):$(password)" https://api.github.com/repos/$(user)/$(repository-name)-core-functional
 	curl -X DELETE -u "$(user):$(password)" https://api.github.com/repos/$(user)/$(repository-name)-core-stubulator
+	heroku apps:destroy --app $(repository-name)-presentation-func01  --confirm $(repository-name)-presentation-func01
+	heroku apps:destroy --app $(repository-name)-presentation-qa01    --confirm $(repository-name)-presentation-qa01
+	heroku apps:destroy --app $(repository-name)-presentation-demo01  --confirm $(repository-name)-presentation-demo01
+	heroku apps:destroy --app $(repository-name)-presentation-stage01 --confirm $(repository-name)-presentation-stage01
+	heroku apps:destroy --app $(repository-name)-presentation-prod01  --confirm $(repository-name)-presentation-prod01
+	heroku apps:destroy --app $(repository-name)-presentation-stub01  --confirm $(repository-name)-presentation-stub01
+	heroku apps:destroy --app $(repository-name)-core-func01  --confirm $(repository-name)-core-func01
+	heroku apps:destroy --app $(repository-name)-core-qa01    --confirm $(repository-name)-core-qa01
+	heroku apps:destroy --app $(repository-name)-core-demo01  --confirm $(repository-name)-core-demo01
+	heroku apps:destroy --app $(repository-name)-core-stage01 --confirm $(repository-name)-core-stage01
+	heroku apps:destroy --app $(repository-name)-core-prod01  --confirm $(repository-name)-core-prod01
+	heroku apps:destroy --app $(repository-name)-core-stub01  --confirm $(repository-name)-core-stub01
+
 
 procet-delete-on-repository-presentation:
 	curl -X DELETE -u "$(user):$(password)" https://api.github.com/repos/$(user)/$(repository-name)
 	curl -X DELETE -u "$(user):$(password)" https://api.github.com/repos/$(user)/$(repository-name)-presentation
 	curl -X DELETE -u "$(user):$(password)" https://api.github.com/repos/$(user)/$(repository-name)-presentation-functional
 	curl -X DELETE -u "$(user):$(password)" https://api.github.com/repos/$(user)/$(repository-name)-presentation-stubulator
+	heroku apps:destroy --app $(repository-name)-presentation-func01  --confirm $(repository-name)-presentation-func01
+	heroku apps:destroy --app $(repository-name)-presentation-qa01    --confirm $(repository-name)-presentation-qa01
+	heroku apps:destroy --app $(repository-name)-presentation-demo01  --confirm $(repository-name)-presentation-demo01
+	heroku apps:destroy --app $(repository-name)-presentation-stage01 --confirm $(repository-name)-presentation-stage01
+	heroku apps:destroy --app $(repository-name)-presentation-prod01  --confirm $(repository-name)-presentation-prod01
+	heroku apps:destroy --app $(repository-name)-presentation-stub01  --confirm $(repository-name)-presentation-stub01
 
 project-initialize:
 	echo "Working on sub-project '$(project-name)'"	
@@ -49,6 +68,7 @@ project-apply-template:
 	git submodule update --init && \
 	rm -rf .git && \
 	for file in `find . -name "*" -type f`; do sed -i '' s/$(template-project-name)/$(repository-name)/g $$file; done && \
+	make setup-heroku && \
 	mv presentation-functional/src/test/groovy/$(template-project-name) presentation-functional/src/test/groovy/$(repository-name) && \
 	mv core/src/main/groovy/$(template-project-name) core/src/main/groovy/$(repository-name) && \
 	mv core/src/test/groovy/$(template-project-name) core/src/test/groovy/$(repository-name) && \
@@ -77,6 +97,7 @@ project-apply-template-presentation:
 	git submodule update --init && \
 	rm -rf .git && \
 	for file in `find . -name "*" -type f`; do sed -i '' s/$(template-project-name)/$(repository-name)/g $$file; done && \
+	make setup-heroku && \
 	mv presentation-functional/src/test/groovy/$(template-project-name) presentation-functional/src/test/groovy/$(repository-name) && \
 	make project-name=presentation project-initialize -f $(MAKEFILE_LIST)
 	make project-name=presentation-functional project-initialize -f $(MAKEFILE_LIST)
