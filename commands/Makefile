@@ -35,7 +35,7 @@ project-delete-on-repository:
 	heroku apps:destroy --app $(repository-name)-core-stub01  --confirm $(repository-name)-core-stub01
 
 
-procet-delete-on-repository-presentation:
+project-delete-on-repository-presentation:
 	curl -X DELETE -u "$(user):$(password)" https://api.github.com/repos/$(user)/$(repository-name)
 	curl -X DELETE -u "$(user):$(password)" https://api.github.com/repos/$(user)/$(repository-name)-presentation
 	curl -X DELETE -u "$(user):$(password)" https://api.github.com/repos/$(user)/$(repository-name)-presentation-functional
