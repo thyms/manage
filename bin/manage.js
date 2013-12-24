@@ -18,7 +18,7 @@ program
   .command('create-project [project_name]')
   .description('Creates basic project on repository')
   .option("-P, --presentation-layer-project [true|false]", "Project with only presentation layer", false)
-  .option("-P, --template-project-tag [template-project-tag]", "Tag of template project", createProjectCommand.template_project_tag)
+  .option("-T, --template-project-tag [template-project-tag]", "Tag of template project", createProjectCommand.template_project_tag)
   .action(createProjectCommand.execute)
   .usage('<project_name>');
 

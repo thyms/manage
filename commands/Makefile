@@ -50,11 +50,11 @@ project-delete-on-repository-presentation:
 project-initialize:
 	echo "Working on sub-project '$(project-name)'"	
 	cd /tmp/$(repository-name)/$(project-name) && \
-	rm .git && \
+	rm -rf .git && \
 	git init && \
-	git remote add origin git@github.com:thyms/$(repository-name)-$(project-name).git && \
+	git remote add origin git@github-$(user).com:$(user)/$(repository-name)-$(project-name).git && \
 	git add -A && \
-	git commit -m "@thyms initial commit." && \
+	git commit -m "@$(user) initial commit." && \
 	git checkout -b develop && \
 	git push --set-upstream origin develop && \
 	git push --all
@@ -73,17 +73,17 @@ project-apply-template:
 	mv core/src/main/groovy/$(template-project-name) core/src/main/groovy/$(repository-name) && \
 	mv core/src/test/groovy/$(template-project-name) core/src/test/groovy/$(repository-name) && \
 	mv core-functional/src/test/groovy/$(template-project-name) core-functional/src/test/groovy/$(repository-name) && \
-	make project-name=presentation project-initialize -f $(MAKEFILE_LIST)
-	make project-name=presentation-functional project-initialize -f $(MAKEFILE_LIST)
-	make project-name=presentation-stubulator project-initialize -f $(MAKEFILE_LIST)
-	make project-name=core project-initialize -f $(MAKEFILE_LIST)
-	make project-name=core-functional project-initialize -f $(MAKEFILE_LIST)
-	make project-name=core-stubulator project-initialize -f $(MAKEFILE_LIST)
+	make user=$(user) project-name=presentation project-initialize -f $(MAKEFILE_LIST)
+	make user=$(user) project-name=presentation-functional project-initialize -f $(MAKEFILE_LIST)
+	make user=$(user) project-name=presentation-stubulator project-initialize -f $(MAKEFILE_LIST)
+	make user=$(user) project-name=core project-initialize -f $(MAKEFILE_LIST)
+	make user=$(user) project-name=core-functional project-initialize -f $(MAKEFILE_LIST)
+	make user=$(user) project-name=core-stubulator project-initialize -f $(MAKEFILE_LIST)
 	cd /tmp/$(repository-name) && \
 	git init && \
-	git remote add origin git@github.com:thyms/$(repository-name).git && \
+	git remote add origin git@github-$(user).com:$(user)/$(repository-name).git && \
 	git add -A && \
-	git commit -m "@thyms initial commit." && \
+	git commit -m "@$(user) initial commit." && \
 	git checkout -b develop && \
 	git push --set-upstream origin develop && \
 	git push --all
@@ -99,14 +99,14 @@ project-apply-template-presentation:
 	for file in `find . -name "*" -type f`; do sed -i '' s/$(template-project-name)/$(repository-name)/g $$file; done && \
 	make setup-heroku && \
 	mv presentation-functional/src/test/groovy/$(template-project-name) presentation-functional/src/test/groovy/$(repository-name) && \
-	make project-name=presentation project-initialize -f $(MAKEFILE_LIST)
-	make project-name=presentation-functional project-initialize -f $(MAKEFILE_LIST)
-	make project-name=presentation-stubulator project-initialize -f $(MAKEFILE_LIST)
+	make user=$(user) project-name=presentation project-initialize -f $(MAKEFILE_LIST)
+	make user=$(user) project-name=presentation-functional project-initialize -f $(MAKEFILE_LIST)
+	make user=$(user) project-name=presentation-stubulator project-initialize -f $(MAKEFILE_LIST)
 	cd /tmp/$(repository-name) && \
 	git init && \
-	git remote add origin git@github.com:thyms/$(repository-name).git && \
+	git remote add origin git@github-$(user).com:$(user)/$(repository-name).git && \
 	git add -A && \
-	git commit -m "@thyms initial commit." && \
+	git commit -m "@$(user) initial commit." && \
 	git checkout -b develop && \
 	git push --set-upstream origin develop && \
 	git push --all

@@ -38,7 +38,7 @@ command = {
         if(code == 0){
           makeTarget = options.presentationLayerProject ? 'project-apply-template-presentation' : 'project-apply-template';
 
-          make_apply_project = spawn('make', ['repository-name='+project_name, 'template-project-name='+templateRepository, 'template-project-tag='+options.templateProjectTag, makeTarget, '-f', make_file_path]);
+          make_apply_project = spawn('make', ['user='+result.username, 'repository-name='+project_name, 'template-project-name='+templateRepository, 'template-project-tag='+options.templateProjectTag, makeTarget, '-f', make_file_path]);
           make_apply_project.stdout.on('data', consoleLog);
           make_apply_project.stderr.on('data', consoleLog);
           make_apply_project.on('exit', function(code) {
