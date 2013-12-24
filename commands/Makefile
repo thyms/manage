@@ -68,6 +68,7 @@ project-apply-template:
 	git submodule update --init && \
 	rm -rf .git && \
 	for file in `find . -name "*" -type f`; do sed -i '' s/$(template-project-name)/$(repository-name)/g $$file; done && \
+	for file in `find . -name "*" -type f`; do sed -i '' s/thyms/$(user)/g $$file; done && \
 	make setup-heroku && \
 	mv presentation-functional/src/test/groovy/$(template-project-name) presentation-functional/src/test/groovy/$(repository-name) && \
 	mv core/src/main/groovy/$(template-project-name) core/src/main/groovy/$(repository-name) && \
@@ -97,6 +98,7 @@ project-apply-template-presentation:
 	git submodule update --init && \
 	rm -rf .git && \
 	for file in `find . -name "*" -type f`; do sed -i '' s/$(template-project-name)/$(repository-name)/g $$file; done && \
+	for file in `find . -name "*" -type f`; do sed -i '' s/thyms/$(user)/g $$file; done && \
 	make setup-heroku && \
 	mv presentation-functional/src/test/groovy/$(template-project-name) presentation-functional/src/test/groovy/$(repository-name) && \
 	make user=$(user) project-name=presentation project-initialize -f $(MAKEFILE_LIST)
